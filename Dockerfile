@@ -18,6 +18,7 @@ RUN npm run build
 FROM alpine:3.19 AS SBOM
 WORKDIR /
 ADD . /SBOM
+ADD ./.trivyignore /.trivyignore
 RUN apk add --no-cache curl 
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.48.3
 RUN trivy fs --format spdx-json --output /sbom.spdx.json /SBOM
@@ -36,6 +37,7 @@ COPY --from=build /root/.env /app/.env
 RUN chgrp -R 0 /app/ \
     && chmod -R g+rwX /app/
 COPY --from=SBOM /sbom.spdx.json /sbom.spdx.json
+COPY --from=SBOM /.trivyignore /.trivyignore
 USER 1001
 EXPOSE 3000
 CMD ["node", "dist/src/main"]
