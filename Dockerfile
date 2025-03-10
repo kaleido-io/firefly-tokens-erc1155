@@ -15,7 +15,7 @@ RUN npm install
 ADD . .
 RUN npm run build
 
-FROM alpine:3.19 AS sbom
+FROM alpine:3.19 AS SBOM
 WORKDIR /
 ADD . /SBOM
 ADD ./.trivyignore /.trivyignore
