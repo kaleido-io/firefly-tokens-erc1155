@@ -2,12 +2,16 @@ name: Docker Main Build
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   docker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
@@ -24,17 +28,22 @@ jobs:
             --label commit=$GITHUB_SHA \
             --label build_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
             --label tag=${{ steps.build_tag_generator.outputs.BUILD_TAG }} \
+            --build-arg BASE_IMAGE=node:20-alpine3.19 \
+            --build-arg BUILD_IMAGE=node:20-alpine3.19 \
             --tag ghcr.io/hyperledger/firefly-tokens-erc1155:${{ steps.build_tag_generator.outputs.BUILD_TAG }} .
 
       - name: Tag release
+        if: github.event.pull_request.merged == true
         run: docker tag ghcr.io/hyperledger/firefly-tokens-erc1155:${{ steps.build_tag_generator.outputs.BUILD_TAG }} ghcr.io/hyperledger/firefly-tokens-erc1155:head
 
       - name: Push docker image
+        if: github.event.pull_request.merged == true
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
           docker push ghcr.io/hyperledger/firefly-tokens-erc1155:${{ steps.build_tag_generator.outputs.BUILD_TAG }}
 
       - name: Push head tag
+        if: github.event.pull_request.merged == true
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
           docker push ghcr.io/hyperledger/firefly-tokens-erc1155:head
