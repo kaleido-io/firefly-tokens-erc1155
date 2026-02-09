@@ -37,9 +37,9 @@ WORKDIR /app
 ADD package*.json ./
 COPY --from=solidity-build /home/node/contracts contracts/source
 COPY --from=solidity-build /home/node/artifacts/contracts/ERC1155MixedFungible.sol contracts
-COPY --from=builder /root/node_modules/ /app/node_modules/
-COPY --from=builder /root/package.json /app/package.json
-COPY --from=builder /root/package-lock.json /app/package-lock.json
+COPY --from=build /root/node_modules/ /app/node_modules/
+COPY --from=build /root/package.json /app/package.json
+COPY --from=build /root/package-lock.json /app/package-lock.json
 COPY --from=build /root/dist dist
 COPY --from=build /root/.env /app/.env
 RUN chgrp -R 0 /app/ \
