@@ -6,7 +6,11 @@
 		"test": "hardhat test --network hardhat"
 	},
 	"dependencies": {
-		"@openzeppelin/contracts": "^5.0.2"
+		"@openzeppelin/contracts": "^5.0.2",
+		"axios": "1.19.0",
+		"form-data": "4.0.6",
+		"multer": "2.2.0",
+		"ws": "8.21.2"
 	},
 	"devDependencies": {
 		"@nomicfoundation/hardhat-toolbox": "^4.0.0",
@@ -14,5 +18,10 @@
 		"hardhat": "^2.20.1",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.3.3"
+	},
+	"overrides": {
+		"mocha": {
+			"js-yaml": "4.3.0"
+		}
 	}
 }
